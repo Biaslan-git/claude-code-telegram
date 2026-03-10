@@ -1,0 +1,56 @@
+services:
+  bot:
+    build: .
+    container_name: claude-telegram-bot
+    restart: unless-stopped
+    volumes:
+      - bot_data:/app/data
+      - ${APPROVED_DIRECTORY:-./projects}:/projects:rw
+      # Mount Claude Code auth from host (~/.claude)
+      - ${CLAUDE_CONFIG_PATH:-~/.claude}:/root/.claude:rw
+    environment:
+      # Required
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_BOT_USERNAME=${TELEGRAM_BOT_USERNAME}
+      - APPROVED_DIRECTORY=/projects
+      - ALLOWED_USERS=${ALLOWED_USERS}
+
+      # Claude Code CLI (auth mounted from host)
+      - USE_SDK=${USE_SDK:-true}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+
+      # Optional overrides
+      - AGENTIC_MODE=${AGENTIC_MODE:-true}
+      - VERBOSE_LEVEL=${VERBOSE_LEVEL:-1}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+      - DEBUG=${DEBUG:-false}
+
+      # Rate limiting
+      - RATE_LIMIT_REQUESTS=${RATE_LIMIT_REQUESTS:-10}
+      - RATE_LIMIT_WINDOW=${RATE_LIMIT_WINDOW:-60}
+
+      # Claude limits
+      - CLAUDE_MAX_TURNS=${CLAUDE_MAX_TURNS:-10}
+      - CLAUDE_TIMEOUT_SECONDS=${CLAUDE_TIMEOUT_SECONDS:-300}
+      - CLAUDE_MAX_COST_PER_USER=${CLAUDE_MAX_COST_PER_USER:-10.0}
+
+      # Features
+      - ENABLE_GIT_INTEGRATION=${ENABLE_GIT_INTEGRATION:-true}
+      - ENABLE_FILE_UPLOADS=${ENABLE_FILE_UPLOADS:-true}
+      - ENABLE_IMAGE_UPLOADS=${ENABLE_IMAGE_UPLOADS:-true}
+
+      # API server (optional)
+      - ENABLE_API_SERVER=${ENABLE_API_SERVER:-false}
+      - API_SERVER_PORT=${API_SERVER_PORT:-8080}
+      - GITHUB_WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET:-}
+      - WEBHOOK_API_SECRET=${WEBHOOK_API_SECRET:-}
+
+      # Security relaxation (trusted environments only)
+      - DISABLE_SECURITY_PATTERNS=${DISABLE_SECURITY_PATTERNS:-false}
+      - DISABLE_TOOL_VALIDATION=${DISABLE_TOOL_VALIDATION:-false}
+    ports:
+      - "${API_SERVER_PORT:-8080}:8080"
+
+volumes:
+  bot_data:
