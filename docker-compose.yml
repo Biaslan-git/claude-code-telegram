@@ -8,6 +8,10 @@ services:
       - ${APPROVED_DIRECTORY:-./projects}:/projects:rw
       # Mount Claude Code auth from host (~/.claude)
       - ${CLAUDE_CONFIG_PATH:-~/.claude}:/root/.claude:rw
+      # Mount SSH keys for Git access
+      - ${SSH_KEY_PATH:-~/.ssh}:/root/.ssh:ro
+      # Mount Git config
+      - ${GITCONFIG_PATH:-~/.gitconfig}:/root/.gitconfig:ro
     environment:
       # Required
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
