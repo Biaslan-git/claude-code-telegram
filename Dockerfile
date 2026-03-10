@@ -33,8 +33,10 @@ COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/pytho
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 COPY src ./src
+COPY docker-entrypoint.sh /usr/local/bin/
 
-RUN mkdir -p /app/data /root/.claude
+RUN mkdir -p /app/data /root/.claude \
+    && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -44,4 +46,5 @@ VOLUME ["/app/data", "/projects", "/root/.claude"]
 
 EXPOSE 8080
 
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["python", "-m", "src.main"]

@@ -8,10 +8,6 @@ services:
       - ${APPROVED_DIRECTORY:-./projects}:/projects:rw
       # Mount Claude Code auth from host (~/.claude)
       - ${CLAUDE_CONFIG_PATH:-~/.claude}:/root/.claude:rw
-      # Mount SSH keys for Git access
-      - ${SSH_KEY_PATH:-~/.ssh}:/root/.ssh:ro
-      # Mount Git config
-      - ${GITCONFIG_PATH:-~/.gitconfig}:/root/.gitconfig:ro
     environment:
       # Required
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
@@ -22,6 +18,12 @@ services:
       # Claude Code CLI (auth mounted from host)
       - USE_SDK=${USE_SDK:-true}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+
+      # Git auth via GitHub PAT (simpler than SSH)
+      - GIT_USER=${GIT_USER:-}
+      - GIT_TOKEN=${GIT_TOKEN:-}
+      - GIT_NAME=${GIT_NAME:-Claude Bot}
+      - GIT_EMAIL=${GIT_EMAIL:-bot@example.com}
 
       # Optional overrides
       - AGENTIC_MODE=${AGENTIC_MODE:-true}
